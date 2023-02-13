@@ -1,0 +1,15 @@
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@npm//:@remix-run/dev/package_json.bzl", remix_bin = "bin")
+load("@npm//:@remix-run/serve/package_json.bzl", remix_serve_bin = "bin")
+
+npm_link_all_packages(name = "node_modules")
+
+remix_bin.remix_binary(
+    name = "remix_binary",
+    visibility = ["//visibility:public"],
+)
+
+remix_serve_bin.remix_serve_binary(
+    name = "remix_serve_binary",
+    visibility = ["//visibility:public"],
+)

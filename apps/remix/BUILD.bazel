@@ -1,0 +1,70 @@
+load("@aspect_rules_ts//ts:defs.bzl", "ts_config")
+load("@aspect_rules_js//js:defs.bzl", "js_run_binary", "js_run_devserver")
+
+name = "remix"
+
+srcs = glob(
+    include = [
+        "app/**/*.ts",
+        "app/**/*.tsx",
+        "public/**/*",
+    ],
+    exclude = [
+        "public/build/**/*",
+    ],
+)
+
+deps = ["//:node_modules/" + d for d in [
+    "@emotion/cache",
+    "@emotion/react",
+    "@emotion/server",
+    "@emotion/styled",
+    "@mui/material",
+    "@remix-run/node",
+    "@remix-run/react",
+    "@remix-run/vercel",
+    "@vercel/node",
+    "react",
+    "react-dom",
+    "@remix-run/dev",
+    "@remix-run/eslint-config",
+    "@remix-run/serve",
+    "@types/react",
+    "@types/react-dom",
+    "eslint",
+    "typescript",
+]]
+
+data = deps + [
+    ":remix.config.js",
+    ":remix.env.d.ts",
+    ":package.json",
+    ":server.js",
+]
+
+ts_config(
+    name = "tsconfig",
+    src = "tsconfig.json",
+    visibility = ["//visibility:public"],
+)
+
+js_run_binary(
+    name = name,
+    srcs = srcs + data,
+    args = ["build"],
+    chdir = package_name(),
+    out_dirs = [
+        "api",
+        "public/build",
+    ],
+    tags = ["local"],
+    tool = "//:remix_binary",
+)
+
+js_run_devserver(
+    name = "{}_dev".format(name),
+    args = ["dev"],
+    chdir = package_name(),
+    command = "../../node_modules/.bin/remix",
+    data = srcs + data,
+)

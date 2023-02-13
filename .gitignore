@@ -1,0 +1,12 @@
+node_modules
+
+bazel-*
+
+.cache
+.env
+.vercel
+.output
+
+build/
+api/index.js
+api/index.js.map
